@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>AJ_SHOP.COM</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Oswald:wght@400;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#04080f;--bg-blue:#070d1a;--bg-red:#110406;
+  --blue:#0e2354;--blue-light:#1a3a8b;--blue-bright:#2557e8;
+  --red:#6b0d14;--red-bright:#c01a24;--red-dark:#3d060b;
+  --border:#0f1a2e;--border-red:#2a0608;
+  --text:#dce4f0;--muted:#3a4a60;--dim-red:#4a1018;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Space Mono','Courier New',monospace;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--blue);border-radius:2px}
+
+/* All SVGs in cards must not intercept touches */
+.p-card-img-wrap svg,.hero-card svg{pointer-events:none}
+
+/* All tappable elements */
+button,a,[data-tap]{
+  cursor:pointer;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes float1{0%,100%{transform:rotate(-3deg) translateY(0)}50%{transform:rotate(-3deg) translateY(-10px)}}
+@keyframes float2{0%,100%{transform:rotate(3deg) translateY(18px)}50%{transform:rotate(3deg) translateY(8px)}}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes overlayIn{from{opacity:0}to{opacity:1}}
+@keyframes menuDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+.ticker-wrap{background:linear-gradient(90deg,var(--red),var(--blue),var(--red));padding:8px 0;overflow:hidden}
+.ticker-inner{display:flex;animation:ticker 30s linear infinite;white-space:nowrap}
+.ticker-inner span{font-size:9px;letter-spacing:3px;color:rgba(255,255,255,.7);padding-right:60px}
+
+/* NAVBAR */
+#navbar{position:fixed;top:0;left:0;right:0;z-index:500;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;transition:all .3s}
+#navbar.scrolled{padding:10px 24px;background:rgba(4,8,15,.97);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
+.nav-logo{display:flex;align-items:center;gap:8px}
+.nav-logo-icon{width:30px;height:30px;border-radius:6px;background:linear-gradient(135deg,var(--blue),var(--red));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',Impact,sans-serif;font-size:13px;color:#fff;flex-shrink:0}
+.nav-logo-text{font-family:'Bebas Neue',Impact,sans-serif;font-size:18px;letter-spacing:4px;color:var(--text)}
+.nav-logo-text span{color:var(--red-bright)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-links{display:flex;gap:24px;align-items:center}
+.nav-link{font-size:9px;letter-spacing:3px;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-link:hover,.nav-link:active{color:var(--blue-bright)}
+#cart-btn{background:none;border:1px solid var(--border);color:var(--muted);font-family:'Space Mono','Courier New',monospace;font-size:9px;letter-spacing:2px;padding:8px 14px;border-radius:5px;display:flex;gap:8px;align-items:center;white-space:nowrap;min-height:44px;transition:all .2s}
+#cart-btn:hover,#cart-btn:active{border-color:var(--red-bright);color:var(--red-bright)}
+#cart-count{background:var(--red-bright);color:#fff;border-radius:50%;min-width:18px;height:18px;padding:0 3px;font-size:10px;font-weight:700;display:none;align-items:center;justify-content:center}
+#burger-btn{display:none;background:none;border:1px solid var(--border);color:var(--muted);width:44px;height:44px;border-radius:5px;flex-direction:column;align-items:center;justify-content:center;gap:5px;flex-shrink:0}
+#burger-btn span{display:block;width:16px;height:1.5px;background:currentColor;border-radius:2px}
+#mobile-menu{display:none;position:fixed;top:0;left:0;right:0;z-index:490;padding-top:68px;background:rgba(4,8,15,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+#mobile-menu.open{display:flex;flex-direction:column;animation:menuDown .2s ease}
+.mobile-link{padding:18px 24px;font-size:11px;letter-spacing:4px;color:var(--muted);border-bottom:1px solid var(--border);text-decoration:none;display:block;min-height:56px;display:flex;align-items:center}
+.mobile-link:active{color:var(--text);background:rgba(255,255,255,.03)}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;align-items:center;padding:90px 24px 48px;position:relative;overflow:hidden;background:radial-gradient(ellipse at 20% 50%,var(--bg-blue) 0%,var(--bg) 50%),radial-gradient(ellipse at 80% 30%,var(--bg-red) 0%,transparent 60%)}
+.hero-grid{position:absolute;inset:0;opacity:.03;background-image:linear-gradient(var(--blue-bright) 1px,transparent 1px),linear-gradient(90deg,var(--blue-bright) 1px,transparent 1px);background-size:80px 80px;pointer-events:none}
+.hero-glow-blue{position:absolute;left:5%;top:20%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(14,35,84,.3) 0%,transparent 70%);pointer-events:none}
+.hero-glow-red{position:absolute;right:8%;bottom:15%;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(107,13,20,.25) 0%,transparent 70%);pointer-events:none}
+.hero-inner{max-width:1240px;margin:0 auto;width:100%;display:flex;align-items:center;gap:40px;flex-wrap:wrap;position:relative;z-index:1}
+.hero-text{flex:1 1 300px}
+.hero-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.hero-eyebrow-line{width:32px;height:1px;background:linear-gradient(90deg,var(--red-bright),transparent)}
+.hero-eyebrow span{font-size:9px;letter-spacing:4px;color:var(--red-bright)}
+.hero-title{font-family:'Bebas Neue',Impact,sans-serif;font-size:clamp(56px,12vw,120px);line-height:.88;letter-spacing:4px;color:var(--text);margin-bottom:24px}
+.hero-title em{font-family:'DM Serif Display',Georgia,serif;font-style:italic;color:var(--red-bright)}
+.hero-sub{font-size:11px;color:var(--muted);line-height:1.9;max-width:360px;margin-bottom:32px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-primary{padding:14px 30px;background:linear-gradient(135deg,var(--red),var(--red-bright));color:#fff;font-family:'Bebas Neue',Impact,sans-serif;font-size:16px;letter-spacing:5px;text-decoration:none;border-radius:6px;border:none;display:inline-block;min-height:48px;display:flex;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s;box-shadow:0 8px 32px rgba(107,13,20,.5)}
+.btn-primary:active{transform:scale(.97)}
+.btn-outline{padding:14px 30px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Bebas Neue',Impact,sans-serif;font-size:16px;letter-spacing:5px;text-decoration:none;border-radius:6px;display:inline-block;min-height:48px;display:flex;align-items:center;justify-content:center;transition:border-color .2s,color .2s}
+.btn-outline:active{border-color:var(--muted);color:var(--text)}
+.hero-cards{flex:0 0 auto;display:flex;gap:16px;align-items:center;justify-content:center}
+.hero-card{border-radius:14px;padding:18px 14px;text-align:center;cursor:pointer}
+.hero-card:nth-child(1){background:linear-gradient(160deg,var(--bg-blue) 0%,var(--bg) 100%);border:1px solid var(--border);animation:float1 3.5s ease-in-out infinite}
+.hero-card:nth-child(2){background:linear-gradient(160deg,var(--bg-red) 0%,var(--bg) 100%);border:1px solid var(--border-red);animation:float2 4.5s ease-in-out infinite}
+.hero-card:active{transform:scale(.97)!important;animation-play-state:paused}
+.hero-card svg{width:160px;height:160px;pointer-events:none}
+.hero-card-name{font-family:'Bebas Neue',Impact,sans-serif;font-size:11px;letter-spacing:3px;margin-top:6px}
+.hero-card-price{font-size:9px;color:var(--muted)}
+
+/* STATS */
+#stats{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:22px 24px;background:linear-gradient(90deg,var(--bg-blue),var(--bg),var(--bg-red))}
+.stats-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-around;flex-wrap:wrap;gap:16px}
+.stat{text-align:center;flex:1 1 80px}
+.stat-val{font-family:'Bebas Neue',Impact,sans-serif;font-size:30px;color:var(--red-bright);letter-spacing:3px}
+.stat-label{font-size:8px;color:var(--muted);letter-spacing:4px;margin-top:3px}
+
+/* PRODUCTS */
+#produktet{padding:60px 24px;max-width:1300px;margin:0 auto}
+.section-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:36px;flex-wrap:wrap;gap:16px}
+.section-eyebrow{font-size:9px;letter-spacing:5px;color:var(--blue-bright);margin-bottom:8px}
+.section-title{font-family:'Bebas Neue',Impact,sans-serif;font-size:clamp(34px,8vw,56px);letter-spacing:4px;color:var(--text);line-height:1}
+.section-title span{color:var(--red-bright)}
+.filter-bar{display:flex;gap:6px;flex-wrap:wrap}
+.filter-btn{padding:8px 14px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Space Mono','Courier New',monospace;font-size:8px;letter-spacing:2px;border-radius:4px;min-height:40px;transition:all .2s}
+.filter-btn.active{background:linear-gradient(135deg,var(--blue),var(--blue-light));border-color:var(--blue-light);color:#fff}
+.filter-btn:active{opacity:.8}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+
+/* PRODUCT CARD */
+.p-card{border-radius:12px;overflow:hidden;border:1px solid var(--border);background:var(--bg-blue);transition:border-color .3s;cursor:pointer}
+.p-card.red-card{background:var(--bg-red)}
+.p-card-img-wrap{height:260px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer}
+.p-card-img-wrap svg{width:220px;height:220px;pointer-events:none;transition:transform .3s}
+.p-card:active .p-card-img-wrap svg{transform:scale(1.04)}
+.p-card-overlay{position:absolute;inset:0;opacity:0;transition:opacity .25s;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;pointer-events:none}
+.p-card-img-wrap:active .p-card-overlay{opacity:1}
+.p-card-overlay-label{font-family:'Bebas Neue',Impact,sans-serif;font-size:13px;letter-spacing:5px;color:#fff;border:1px solid rgba(255,255,255,.4);padding:9px 22px;border-radius:4px}
+.p-card-tag{position:absolute;top:12px;left:12px;color:#fff;font-size:8px;padding:4px 9px;border-radius:3px;letter-spacing:3px;pointer-events:none}
+.tag-bestseller,.tag-new{background:var(--blue);border:1px solid var(--blue-light)}
+.tag-limited{background:var(--red-dark);border:1px solid var(--dim-red)}
+.tag-exclusive{background:linear-gradient(135deg,var(--red),var(--red-bright));border:1px solid var(--red-bright)}
+.p-card-body{padding:16px}
+.p-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.p-card-name{font-family:'Bebas Neue',Impact,sans-serif;font-size:17px;letter-spacing:3px;color:var(--text);margin-bottom:3px}
+.p-card-quote{font-size:9px;font-style:italic}
+.p-card-price{font-family:'Bebas Neue',Impact,sans-serif;font-size:19px;color:var(--red-bright);letter-spacing:2px;white-space:nowrap}
+.color-dots{display:flex;gap:10px;margin-bottom:14px;align-items:center;flex-wrap:wrap}
+.color-dot{width:28px;height:28px;border-radius:50%;border:2px solid transparent;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);flex-shrink:0;transition:transform .15s,border-color .15s}
+.color-dot:active{transform:scale(1.2)}
+.color-dot.active-blue{border-color:var(--blue-bright);outline:3px solid rgba(37,87,232,.2)}
+.color-dot.active-red{border-color:var(--red-bright);outline:3px solid rgba(192,26,36,.2)}
+.color-name-label{font-size:8px;color:var(--muted);margin-left:auto}
+.p-card-btn{width:100%;padding:12px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Space Mono','Courier New',monospace;font-size:9px;letter-spacing:3px;border-radius:4px;min-height:44px;transition:all .2s}
+.p-card-btn:active{border-color:var(--red-bright);color:var(--red-bright);background:var(--red-dark)}
+
+/* BANNER */
+#banner{margin:0 24px 60px;border-radius:14px;overflow:hidden;background:linear-gradient(135deg,var(--bg-blue) 0%,var(--bg) 40%,var(--bg-red) 100%);border:1px solid var(--border);padding:50px 36px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px;position:relative}
+#banner::before{content:'';position:absolute;left:0;top:0;width:50%;height:100%;background:radial-gradient(ellipse at 0% 50%,rgba(14,35,84,.3) 0%,transparent 60%);pointer-events:none}
+#banner::after{content:'';position:absolute;right:0;top:0;width:50%;height:100%;background:radial-gradient(ellipse at 100% 50%,rgba(107,13,20,.3) 0%,transparent 60%);pointer-events:none}
+.banner-content,.banner-btn{position:relative;z-index:1}
+.banner-quote{font-family:'DM Serif Display',Georgia,serif;font-style:italic;font-size:clamp(22px,5vw,52px);color:var(--text);line-height:1.15;margin-bottom:12px}
+.banner-quote span{color:var(--red-bright)}
+.banner-author{font-size:10px;color:var(--muted);letter-spacing:3px}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:40px 24px 24px;background:linear-gradient(180deg,var(--bg) 0%,#020508 100%)}
+.footer-inner{max-width:1200px;margin:0 auto}
+.footer-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:32px;margin-bottom:40px}
+.footer-brand-name{font-family:'Bebas Neue',Impact,sans-serif;font-size:24px;letter-spacing:6px;color:var(--text);margin-bottom:8px}
+.footer-brand-name span{color:var(--red-bright)}
+.footer-brand-desc{font-size:10px;color:var(--muted);line-height:1.9;max-width:220px}
+.footer-col-title{font-size:8px;letter-spacing:4px;color:var(--blue-bright);margin-bottom:14px}
+.footer-link{font-size:10px;color:var(--muted);margin-bottom:9px;display:block;text-decoration:none;min-height:36px;display:flex;align-items:center}
+.footer-link:active{color:var(--red-bright)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.footer-copy{font-size:9px;color:var(--muted)}
+
+/* ── MODAL ───────────────────────────────────────────────────── */
+#modal-overlay{
+  position:fixed;inset:0;z-index:900;
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+#modal-overlay.open{display:flex;animation:overlayIn .2s ease}
+#modal-backdrop{
+  position:absolute;inset:0;background:rgba(0,0,0,.85);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+#modal-box{
+  position:relative;background:var(--bg-blue);border:1px solid var(--border);
+  border-radius:14px;width:100%;max-width:820px;
+  display:flex;flex-direction:row;overflow:hidden;
+  animation:fadeUp .3s cubic-bezier(.16,1,.3,1);
+  max-height:85vh;
+  z-index:1;
+}
+#modal-preview{
+  flex:0 0 300px;min-height:340px;display:flex;align-items:center;
+  justify-content:center;position:relative;transition:background .4s;overflow:hidden;
+}
+#modal-preview svg{pointer-events:none}
+#modal-info{
+  flex:1 1 0;padding:32px 24px 24px;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+#modal-close{
+  position:absolute;top:12px;right:12px;z-index:20;
+  background:rgba(4,8,15,.8);border:1px solid rgba(255,255,255,.15);color:var(--text);
+  width:40px;height:40px;border-radius:8px;font-size:22px;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s,border-color .2s;
+}
+#modal-close:active{background:var(--red-dark);border-color:var(--red-bright)}
+#modal-eyebrow{font-size:9px;color:var(--blue-bright);letter-spacing:4px;margin-bottom:10px}
+#modal-name{font-family:'Bebas Neue',Impact,sans-serif;font-size:32px;letter-spacing:4px;color:var(--text);line-height:1;margin-bottom:8px}
+#modal-desc{font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:10px}
+#modal-quote-block{font-family:'Oswald',Impact,sans-serif;font-size:14px;letter-spacing:2px;border-left:2px solid var(--red-bright);padding-left:12px;margin-bottom:18px}
+#modal-author{font-family:'Space Mono','Courier New',monospace;font-size:9px;color:var(--muted);display:block;margin-top:4px}
+#modal-price{font-family:'Bebas Neue',Impact,sans-serif;font-size:28px;color:var(--red-bright);letter-spacing:2px;margin-bottom:20px}
+.modal-section-label{font-size:9px;color:var(--muted);letter-spacing:3px;margin-bottom:10px}
+#modal-colors-wrap{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.modal-color-dot{
+  width:36px;height:36px;border-radius:50%;
+  border:2px solid transparent;flex-shrink:0;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);
+  transition:border-color .15s,transform .15s;
+}
+.modal-color-dot:active{transform:scale(1.15)}
+.modal-color-dot.active{border-color:var(--red-bright);outline:3px solid rgba(192,26,36,.3)}
+#modal-sizes-wrap{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.size-btn{
+  padding:10px 14px;background:transparent;border:1px solid var(--border);
+  color:var(--muted);font-family:'Space Mono','Courier New',monospace;
+  font-size:11px;border-radius:5px;min-width:48px;min-height:44px;
+  text-align:center;display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+.size-btn.active{background:linear-gradient(135deg,var(--red),var(--red-bright));border-color:var(--red-bright);color:#fff}
+.size-btn:active{opacity:.8}
+#modal-add-btn{
+  width:100%;padding:16px;background:linear-gradient(135deg,var(--red),var(--red-bright));
+  border:none;color:#fff;font-family:'Bebas Neue',Impact,sans-serif;
+  font-size:18px;letter-spacing:5px;border-radius:6px;min-height:52px;
+  transition:opacity .2s,background .25s;
+}
+#modal-add-btn:disabled{background:var(--border);color:var(--muted)}
+#modal-add-btn:active:not(:disabled){opacity:.85}
+#modal-add-btn.success{background:#0e2e12;color:#4ade80}
+.modal-meta{display:flex;gap:14px;margin-top:14px;font-size:9px;color:var(--muted);flex-wrap:wrap}
+#modal-tag{position:absolute;top:14px;left:14px;color:#fff;font-size:9px;padding:4px 10px;border-radius:3px;letter-spacing:3px;display:none;pointer-events:none}
+
+/* ── CART ─────────────────────────────────────────────────────── */
+#cart-overlay{position:fixed;inset:0;z-index:1000;display:none}
+#cart-overlay.open{display:flex}
+#cart-backdrop{flex:1;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+#cart-drawer{
+  width:min(420px,100vw);background:var(--bg-blue);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;animation:slideIn .3s cubic-bezier(.16,1,.3,1);
+  z-index:1;
+}
+#cart-header{padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+#cart-title{font-family:'Bebas Neue',Impact,sans-serif;font-size:22px;letter-spacing:5px;color:var(--text)}
+#cart-close-btn{background:none;border:none;color:var(--muted);font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center}
+#cart-close-btn:active{color:var(--text)}
+#cart-items{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 20px}
+.cart-empty{color:var(--muted);text-align:center;margin-top:80px;font-size:11px}
+.cart-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--border)}
+.cart-item-thumb{width:62px;height:62px;border-radius:8px;flex-shrink:0;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
+.cart-item-thumb svg{pointer-events:none}
+.cart-item-name{font-family:'Bebas Neue',Impact,sans-serif;font-size:13px;letter-spacing:2px;color:var(--text);margin-bottom:2px}
+.cart-item-sub{font-size:10px;color:var(--muted);margin-bottom:8px}
+.cart-item-controls{display:flex;align-items:center;gap:8px}
+.qty-wrap{display:flex;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.qty-btn{background:none;border:none;color:var(--muted);width:32px;height:32px;font-size:18px;display:flex;align-items:center;justify-content:center}
+.qty-btn:active{background:rgba(255,255,255,.06);color:var(--text)}
+.qty-val{color:var(--text);font-size:12px;width:28px;text-align:center;line-height:32px}
+.cart-item-price{font-family:'Bebas Neue',Impact,sans-serif;font-size:16px;color:var(--red-bright);margin-left:auto;align-self:center}
+.cart-item-remove{background:none;border:none;color:var(--muted);font-size:16px;width:32px;height:32px;display:flex;align-items:center;justify-content:center}
+.cart-item-remove:active{color:var(--red-bright)}
+#cart-footer{padding:14px 20px 28px;border-top:1px solid var(--border)}
+#cart-total-row{display:flex;justify-content:space-between;margin-bottom:14px;align-items:center}
+#cart-total-label{font-size:10px;color:var(--muted)}
+#cart-total-val{font-family:'Bebas Neue',Impact,sans-serif;font-size:24px;color:var(--red-bright);letter-spacing:2px}
+#checkout-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--red),var(--red-bright));border:none;color:#fff;font-family:'Bebas Neue',Impact,sans-serif;font-size:17px;letter-spacing:5px;border-radius:6px;min-height:52px}
+#checkout-btn:active{opacity:.85}
+#cart-note{text-align:center;font-size:9px;color:var(--muted);margin-top:8px}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .nav-links{display:none}
+  #burger-btn{display:flex}
+  .products-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* MOBILE MODAL: bottom sheet */
+@media(max-width:680px){
+  #modal-overlay{padding:0;align-items:flex-end;justify-content:flex-end}
+  #modal-box{
+    flex-direction:column;
+    border-radius:20px 20px 0 0;border-bottom:none;
+    max-height:93vh;max-width:100%;width:100%;
+  }
+  #modal-preview{
+    flex:0 0 auto;height:190px;min-height:unset;width:100%;
+    border-bottom:1px solid var(--border);
+  }
+  #modal-preview svg{width:170px!important;height:170px!important}
+  #modal-info{padding:18px 20px 36px;overflow-y:auto}
+  #modal-name{font-size:26px}
+  #modal-price{font-size:24px;margin-bottom:16px}
+  .modal-color-dot{width:38px;height:38px}
+  .size-btn{min-height:48px;font-size:12px}
+  #modal-add-btn{min-height:54px;font-size:17px}
+}
+
+@media(max-width:600px){
+  #navbar{padding:12px 16px}
+  #hero{padding:80px 16px 40px;min-height:auto}
+  .hero-inner{flex-direction:column;gap:28px;align-items:flex-start}
+  .hero-title{font-size:clamp(52px,15vw,76px)}
+  .hero-sub{font-size:10px;margin-bottom:22px}
+  .hero-btns{width:100%}
+  .btn-primary,.btn-outline{flex:1;text-align:center;padding:13px 14px;font-size:14px;letter-spacing:3px}
+  .hero-cards{width:100%;justify-content:center}
+  .hero-card svg{width:130px!important;height:130px!important}
+  #stats{padding:18px 16px}
+  .stat-val{font-size:24px}
+  #produktet{padding:40px 16px}
+  .section-header{flex-direction:column;align-items:flex-start;margin-bottom:20px}
+  .products-grid{grid-template-columns:1fr}
+  #banner{margin:0 16px 40px;padding:30px 20px;flex-direction:column;align-items:flex-start}
+  .banner-btn,.banner-btn .btn-primary{width:100%}
+  #cart-backdrop{display:none}
+  #cart-drawer{width:100vw;border-left:none}
+  footer{padding:32px 16px 20px}
+  .footer-top{gap:20px}
+  .footer-bottom{flex-direction:column}
+}
+@media(max-width:380px){
+  .hero-title{font-size:50px}
+  .hero-card svg{width:115px!important;height:115px!important}
+  .products-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">AJ</div>
+    <span class="nav-logo-text">AJ_SHOP<span>.</span>COM</span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-links">
+      <a class="nav-link" href="#produktet">KOLEKSIONET</a>
+      <a class="nav-link" href="#produktet">MODELET</a>
+      <a class="nav-link" href="#banner">KONTAKT</a>
+    </div>
+    <button id="cart-btn">🛒 SHPORTA <span id="cart-count">0</span></button>
+    <button id="burger-btn" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div id="mobile-menu">
+  <a class="mobile-link" href="#produktet">KOLEKSIONET</a>
+  <a class="mobile-link" href="#produktet">MODELET</a>
+  <a class="mobile-link" href="#banner">KONTAKT</a>
+</div>
+
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    <span>✦ TRANSPORT FALAS MBI 5,000 L &nbsp;✦ KTHIM 30 DITË &nbsp;✦ 380GSM PREMIUM &nbsp;✦ CITATE UNIKE &nbsp;✦ PRODHIM SHQIPTAR &nbsp;&nbsp;&nbsp;</span>
+    <span>✦ TRANSPORT FALAS MBI 5,000 L &nbsp;✦ KTHIM 30 DITË &nbsp;✦ 380GSM PREMIUM &nbsp;✦ CITATE UNIKE &nbsp;✦ PRODHIM SHQIPTAR &nbsp;&nbsp;&nbsp;</span>
+    <span>✦ TRANSPORT FALAS MBI 5,000 L &nbsp;✦ KTHIM 30 DITË &nbsp;✦ 380GSM PREMIUM &nbsp;✦ CITATE UNIKE &nbsp;✦ PRODHIM SHQIPTAR &nbsp;&nbsp;&nbsp;</span>
+  </div>
+</div>
+
+<section id="hero">
+  <div class="hero-grid"></div><div class="hero-glow-blue"></div><div class="hero-glow-red"></div>
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-eyebrow"><div class="hero-eyebrow-line"></div><span>KOLEKSIONI 2025</span></div>
+      <h1 class="hero-title">WEAR<br>YOUR<br><em>story.</em></h1>
+      <p class="hero-sub">Hoodie-t e AJ_SHOP — me citate që frymëzojnë dhe ngjyra që flasin. Streetwear shqiptar për brezin e guximshëm.</p>
+      <div class="hero-btns">
+        <a href="#produktet" class="btn-primary">SHIKO KOLEKSIONIN</a>
+        <a href="#banner" class="btn-outline">NA KONTAKTO</a>
+      </div>
+    </div>
+    <div class="hero-cards">
+      <div class="hero-card" data-modal="1">
+        <svg viewBox="0 0 200 210" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="100" cy="200" rx="60" ry="8" fill="rgba(0,0,0,.35)"/><path d="M55 35C55 35 38 42 30 58L8 108l24 9 3-29v90h130V88l3 29 24-9L170 58C162 42 145 35 145 35c-3 11-21 19-45 19S58 46 55 35z" fill="#0a1428"/><path d="M55 35C55 35 38 42 30 58L8 108l24 9 3-29v90H80V54c-12-2-20-10-25-19z" fill="rgba(0,0,0,.18)"/><path d="M88 38Q96 46 100 50q4-4 12-12" stroke="rgba(255,255,255,.2)" stroke-width="1.2" fill="none" stroke-linecap="round"/><circle cx="86" cy="38" r="2" fill="rgba(255,255,255,.25)"/><circle cx="114" cy="38" r="2" fill="rgba(255,255,255,.25)"/><text x="100" y="97" text-anchor="middle" font-family="Oswald,Impact,sans-serif" font-weight="700" font-size="13" fill="#6aaaf5" fill-opacity=".9" letter-spacing="1.5">BORN IN</text><text x="100" y="115" text-anchor="middle" font-family="Oswald,Impact,sans-serif" font-weight="700" font-size="13" fill="#6aaaf5" fill-opacity=".9" letter-spacing="1.5">CHAOS</text><text x="100" y="123" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="#6aaaf5" fill-opacity=".4" letter-spacing="2">— AJ Original</text><text x="100" y="173" text-anchor="middle" font-family="Impact,sans-serif" font-size="7" fill="#6aaaf5" fill-opacity=".22" letter-spacing="3">AJ_SHOP</text></svg>
+        <div class="hero-card-name" style="color:var(--blue-bright)">BORN IN CHAOS</div>
+        <div class="hero-card-price">2,800 L</div>
+      </div>
+      <div class="hero-card" data-modal="3">
+        <svg viewBox="0 0 200 210" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="100" cy="200" rx="60" ry="8" fill="rgba(0,0,0,.35)"/><path d="M55 35C55 35 38 42 30 58L8 108l24 9 3-29v90h130V88l3 29 24-9L170 58C162 42 145 35 145 35c-3 11-21 19-45 19S58 46 55 35z" fill="#1f0507"/><path d="M55 35C55 35 38 42 30 58L8 108l24 9 3-29v90H80V54c-12-2-20-10-25-19z" fill="rgba(0,0,0,.18)"/><path d="M88 38Q96 46 100 50q4-4 12-12" stroke="rgba(255,255,255,.2)" stroke-width="1.2" fill="none" stroke-linecap="round"/><circle cx="86" cy="38" r="2" fill="rgba(255,255,255,.25)"/><circle cx="114" cy="38" r="2" fill="rgba(255,255,255,.25)"/><text x="100" y="97" text-anchor="middle" font-family="Oswald,Impact,sans-serif" font-weight="700" font-size="13" fill="#d95050" fill-opacity=".9" letter-spacing="1.5">SILENCE IS</text><text x="100" y="115" text-anchor="middle" font-family="Oswald,Impact,sans-serif" font-weight="700" font-size="13" fill="#d95050" fill-opacity=".9" letter-spacing="1.5">LOUD</text><text x="100" y="123" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="#d95050" fill-opacity=".4" letter-spacing="2">— AJ Original</text><text x="100" y="173" text-anchor="middle" font-family="Impact,sans-serif" font-size="7" fill="#d95050" fill-opacity=".22" letter-spacing="3">AJ_SHOP</text></svg>
+        <div class="hero-card-name" style="color:var(--red-bright)">SILENCE IS LOUD</div>
+        <div class="hero-card-price">3,000 L</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="stats">
+  <div class="stats-inner">
+    <div class="stat"><div class="stat-val">1,200+</div><div class="stat-label">KLIENTË</div></div>
+    <div class="stat"><div class="stat-val">6</div><div class="stat-label">MODELE</div></div>
+    <div class="stat"><div class="stat-val">380gsm</div><div class="stat-label">CILËSI</div></div>
+    <div class="stat"><div class="stat-val">30</div><div class="stat-label">DITË KTHIM</div></div>
+  </div>
+</section>
+
+<section id="produktet">
+  <div class="section-header">
+    <div>
+      <div class="section-eyebrow">KOLEKSIONI AKTUAL</div>
+      <h2 class="section-title">HOODIE-T ME <span>CITATE</span></h2>
+    </div>
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="ALL">ALL</button>
+      <button class="filter-btn" data-filter="BESTSELLER">BESTSELLER</button>
+      <button class="filter-btn" data-filter="NEW">NEW</button>
+      <button class="filter-btn" data-filter="LIMITED">LIMITED</button>
+      <button class="filter-btn" data-filter="EXCLUSIVE">EXCLUSIVE</button>
+    </div>
+  </div>
+  <div class="products-grid">
+
+    <div class="p-card" data-id="1" data-tag="BESTSELLER">
+      <div class="p-card-img-wrap" style="background:radial-gradient(ellipse at 50% 40%,#080e20 0%,#030710 100%)" data-modal="1">
+        <svg width="220" height="220" viewBox="0 0 200 210" fill="none"><ellipse cx="100" cy="200" rx="60" ry="8" fill="rgba(0,0,0,.35)"/><path d="M55 35C55 35 38 42 30 58L8 108l24 9 3-29v90h130V88l3 29 24-9L170 58C162 42 145 35 145 35c-3 11-21 19-45 19S58 46 55 35z" fill="#080e20"/><path d="M55 35C55 35 38 42 30 58L8 108l24 9 3-29v90H80V54c-12-2-20-10-25-19z" fill="rgba(0,0,0,.18)"/><path d="M145 35C145 35 162 42 170 58l22 50-24 9-3-29v90h-17V54c4-2 0-10-3-19z" fill="rgba(255,255,255,.04)"/><rect x="68" y="132" width="64" height="34" rx="4" fill="rgba(0,0,0,.22)"/><path d="M68 35C68 20 80 12 100 12s32 8 32 23" stroke="rgba(255,255,255,.12)" stroke-width="2" fill="none"/><path d="M88 38Q96 46 100 50q4-4 12-12" stroke="rgba(255,255,255,.2)" stroke-width="1.2" fill="none"/><circle cx="86" cy="38" r="2" fill="rgba(255,255,255,.25)"/><circle cx="114" cy="38" r="2" fill="rgba(255,255,255,.25)"/><text x="100" y="97" text-anchor="middle" font-family="Oswald,Impact,sans-serif" font-weight="700" font-size="13" fill="#4a90d9" fill-opacity=".9" letter-spacing="1.5">BORN IN</text><text x="100" y="115" text-anchor="middle" font-family="Oswald,Impact,sans-serif" font-weight="700" font-size="13" fill="#4a90d9" fill-opacity=".9" letter-spacing="1.5">CHAOS</text><text x="100" y="123" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="#4a90d9" fill-opacity=".4" letter-spacing="2">— AJ Original</text><text x="100" y="173" text-anchor="middle" font-family="Impact,sans-serif" font-size="7" fill="#4a90d9" fill-opacity=".22" letter-spacing="3">AJ_SHOP</text></svg>
+        <div class="p-card-tag tag-bestseller">BESTSELLER</div>
+        <div class="p-card-overlay"><div class="p-card-overlay-label">SHIKO DETAJET</div></div>
+      </div>
+      <div class="p-card-body">
+        <div class="p-card-top"><div><div class="p-card-name">BORN IN CHAOS</div><div class="p-card-quote" style="color:var(--blue-bright)">"Born in Chaos"</div></div><div class="p-card-price">2,800 L</div></div>
+        <div class="color-dots">
+          <button class="color-dot active-blue" style="background:#080e20" data-hid="1" data-ci="0"></button>
+          <button class="color-dot" style="background:#0a1428" data-hid="1" data-ci="1"></button>
+          <button class="color-dot" style="background:#1a0408" data-hid="1" data-ci="2"></button>
+          <button class="color-dot" style="background:#2d0609" data-hid="1" data-ci="3"></button>
+          <span class="color-name-label">Abyss Blue</span>
+        </div>
+        <button class="p-card-btn" data-modal="1">SHTO NË SHPORTË →</button>
+      </div>
+    </div>
+
+    <div class="p-card" data-id="2" data-tag="NEW">
+      <div class="p-card-img-wrap" style="background:radial-gradient(ellipse at 50% 40%,#0d1e3a 0%,#030710 100%)" data-modal="2">
+        <svg width="220" height="220" viewBox="0 0 200 210" fill="none"><ellipse cx="100" cy="200" rx="60" ry="8" fill="rgba(0,0,0,.35)"/><path d="M55 35C55 35 38 42 30 58L8 108l24 9 3-29v90h130V88l3 29 24-9L170 58C162 42 145 35 145 35c-3 11-21 19-45 19S58 46 55 35z" fill="#0d1e3a"/><path d="M55 35C55 35 38 42 30 58L8 108l24 9 3-29v90H80V54c-12-2-20-10-25-19z" fill="rgba(0,0,0,.18)"/><path d="M145 35C145 35 162 42 170 58l22 50-24 9-3-29v90h-17V54c4-2 0-10-3-19z" fill="rgba(255,255,255,.04)"/><rect x="68" y="132" width="64" height="34" rx="4" fill="rgba(0,0,0,.22)"/><path d="M88 38Q96 46 100 50q4-4 12-12" stroke="rgba(255,255,255,.2)" stroke-width="1.2" fill="none"/><circle cx="86" cy="38" r="2" fill="rgba(255,255,255,.25)"/><circle cx="114" cy="38" r="2" fill="rgba(255,255,255,.25)"/><text x="100" y="106" text-anchor="middle" font-family="Oswald,Impact,sans-serif" font-weight="700" font-size="15" fill="#5b9bd5" fill-opacity=".9" letter-spacing="1.5">NO RULES</text><text x="100" y="173" text-anchor="middle" font-family="Impact,sans-serif" font-size="7" fill="#5b9bd5" fill-opacity=".22" letter-spacing="3">AJ_SHOP</text></svg>
+        <div class="p-card-tag tag-new">NEW</div>
+        <div class="p-card-overlay"><div class="p-card-overlay-label">SHIKO DETAJET</div></div>
+      </div>
+      <div class="p-card-body">
+        <div class="p-card-top"><div><div class="p-card-name">NO RULES</div><div class="p-card-quote" style="color:var(--blue-bright)">"No Rules"</div></div><div class="p-card-price">2,600 L</div></div>
+        <div class="color-dots">
+          <button class="color-dot active-blue" style="background:#0d1e3a" data-hid="2" data-ci="0"></button>
+          <button class="color-dot" style="background:#060d1c" data-hid="2" data-ci="1"></button>
+          <button class="color-dot" style="background:#220508" data-hid="2" data-ci="2"></button>
+          <button class="color-dot" style="background:#1e0407" data-hid="2" data-ci="3"></button>
+          <span class="color-name-label">Steel Blue</span>
+        </div>
+        <button class="p-card-btn" data-modal="2">SHTO NË SHPORTË →</button>
+      </div>
+    </div>
+
+    <div class="p-card" data-id="3" data-tag="LIMITED">
+      <div class="p-card-img-wrap" style="background:radial-gradient(ellipse at 50% 40%,#091629 0%,#030710 100%)" data-modal="3">
+        <svg width="220" height="220" viewBox="0 0 200 210" fill="none"><ellipse cx="100" cy="200" rx="60" ry="8" fill="rgba(0,0,0,.35)"/><path d="M55 35C55 35 38 42 30 58L8 108l24 9 3-29v90h130V88l3 29 24-9L170 58C162 42 145 35 145 35c-3 11-21 19-45 19S58 46 55 35z" fill="#091629"/><path d="M55 35C55 35 38 42 30 58L8 108l24 9 3-29v90H80V54c-12-2-20-10-25-19z" fill="rgba(0,0,0,.18)"/><path d="M145 35C145 35 162 42 170 58l22 50-24 9-3-29v90h-17V54c4-2 0-10-3-19z" fill="rgba(255,255,255,.04)"/><rect x="68" y="132" width="64" height="34" rx="4" fill="rgba(0,0,0,.22)"/><path d="M88 38Q96 46 100 50q4-4 12-12" stroke="rgba(255,255,255,.2)" stroke-width="1.2" fill="none"/><circle cx="86" cy="38" r="2" fill="rgba(255,255,255,.25)"/><circle cx="114" cy="38" r="2" fill="rgba(255,255,255,.25)"/><text x="100" y="97" text-anchor="middle" font-family="Oswald,Impact,sans-serif" font-weight="700" font-size="13" fill="#4a8fd4" fill-opacity=".9" letter-spacing="1.5">SILENCE IS</text><text x="100" y="115" text-anchor="middle" font-family="Oswald,Impact,sans-serif" font-weight="700" font-size="13" fill="#4a8fd4" fill-opacity=".9" letter-spacing="1.5">LOUD</text><text x="100" y="123" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="#4a8fd4" fill-opacity=".4" letter-spacing="2">— AJ Original</text><text x="100" y="173" text-anchor="middle" font-family="Impact,sans-serif" font-size="7" fill="#4a8fd4" fill-opacity=".22" letter-spacing="3">AJ_SHOP</text></svg>
+        <div class="p-card-tag tag-limited">LIMITED</div>
+        <div class="p-card-overlay"><div class="p-card-overlay-label">SHIKO DETAJET</div></div>
+      </div>
+      <div class="p-card-body">
+        <div class="p-card-top"><div><div class="p-card-name">SILENCE IS LOUD</div><div class="p-card-quote" style="color:var(--blue-bright)">"Silence is Loud"</div></div><div class="p-card-price">3,000 L</div></div>
+        <div class="color-dots">
+          <button class="color-dot active-blue" style="background:#091629" data-hid="3" data-ci="0"></button>
+          <button class="color-dot" style="background:#0b1f3a" data-hid="3" data-ci="1"></button>
+          <button class="color-dot" style="background:#1f0507" data-hid="3" data-ci="2"></button>
+          <button class="color-dot" style="background:#280608" data-hid="3" data-ci="3"></button>
+          <span class="color-name-label">Deep Ocean</span>
+        </div>
+        <button class="p-card-btn" data-modal="3">SHTO NË SHPORTË →</button>
+      </div>
+    </div>
+
+    <div class="p-card" data-id="4" data-tag="EXCLUSIVE">
+      <div class="p-card-img-wrap" style="background:radial-gradient(ellipse at 50% 40%,#060f22 0%,#030710 100%)" data-modal="4">
+        <svg width="220" height="220" viewBox="0 0 200 210" fill="none"><ellipse cx="100" cy="200" rx="60" ry="8" fill="rgba(0,0,0,.35)"/><path d="M55 35C55 35 38 42 30 58L8 108l24 9 3-29v90h130V88l3 29 24-9L170 58C162 42 145 35 145 35c-3 11-21 19-45 19S58 46 55 35z" fill="#060f22"/><path d="M55 35C55 35 38 42 30 58L8 108l24 9 3-29v90H80V54c-12-2-20-10-25-19z" fill="rgba(0,0,0,.18)"/><path d="M145 35C145 35 162 42 170 58l22 50-24 9-3-29v90h-17V54c4-2 0-10-3-19z" fill="rgba(255,255,255,.04)"/><rect x="68" y="132" width="64" height="34" rx="4" fill="rgba(0,0,0,.22)"/><path d="M88 38Q96 46 100 50q4-4 12-12" stroke="rgba(255,255,255,.2)" stroke-width="1.2" fill="none"/><circle cx="86" cy="38" r="2" fill="rgba(255,255,255,.25)"/><circle cx="114" cy="38" r="2" fill="rgba(255,255,255,.25)"/><text x="100" y="106" text-anchor="middle" font-family="Oswald,Impact,sans-serif" font-weight="700" font-size="15" fill="#5a9ae0" fill-opacity=".9" letter-spacing="1.5">BREATHE FIRE</text><text x="100" y="121" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="#5a9ae0" fill-opacity=".4" letter-spacing="2">— AJ Original</text><text x="100" y="173" text-anchor="middle" font-family="Impact,sans-serif" font-size="7" fill="#5a9ae0" fill-opacity=".22" letter-spacing="3">AJ_SHOP</text></svg>
+        <div class="p-card-tag tag-exclusive">EXCLUSIVE</div>
+        <div class="p-card-overlay"><div class="p-card-overlay-label">SHIKO DETAJET</div></div>
+      </div>
+      <div class="p-card-body">
+        <div class="p-card-top"><div><div class="p-card-name">BREATHE FIRE</div><div class="p-card-quote" style="color:var(--blue-bright)">"Breathe Fire"</div></div><div class="p-card-price">3,200 L</div></div>
+        <div class="color-dots">
+          <button class="color-dot active-blue" style="background:#060f22" data-hid="4" data-ci="0"></button>
+          <button class="color-dot" style="background:#0c1d3d" data-hid="4" data-ci="1"></button>
+          <button class="color-dot" style="background:#1c0407" data-hid="4" data-ci="2"></button>
+          <button class="color-dot" style="background:#250508" data-hid="4" data-ci="3"></button>
+          <span class="color-name-label">Phantom Blue</span>
+        </div>
+        <button class="p-card-btn" data-modal="4">SHTO NË SHPORTË →</button>
+      </div>
+    </div>
+
+    <div class="p-card" data-id="5" data-tag="">
+      <div class="p-card-img-wrap" style="background:radial-gradient(ellipse at 50% 40%,#0a192f 0%,#030710 100%)" data-modal="5">
+        <svg width="220" height="220" viewBox="0 0 200 210" fill="none"><ellipse cx="100" cy="200" rx="60" ry="8" fill="rgba(0,0,0,.35)"/><path d="M55 35C55 35 38 42 30 58L8 108l24 9 3-29v90h130V88l3 29 24-9L170 58C162 42 145 35 145 35c-3 11-21 19-45 19S58 46 55 35z" fill="#0a192f"/><path d="M55 35C55 35 38 42 30 58L8 108l24 9 3-29v90H80V54c-12-2-20-10-25-19z" fill="rgba(0,0,0,.18)"/><path d="M145 35C145 35 162 42 170 58l22 50-24 9-3-29v90h-17V54c4-2 0-10-3-19z" fill="rgba(255,255,255,.04)"/><rect x="68" y="132" width="64" height="34" rx="4" fill="rgba(0,0,0,.22)"/><path d="M88 38Q96 46 100 50q4-4 12-12" stroke="rgba(255,255,255,.2)" stroke-width="1.2" fill="none"/><circle cx="86" cy="38" r="2" fill="rgba(255,255,255,.25)"/><circle cx="114" cy="38" r="2" fill="rgba(255,255,255,.25)"/><text x="100" y="97" text-anchor="middle" font-family="Oswald,Impact,sans-serif" font-weight="700" font-size="13" fill="#4a9fdc" fill-opacity=".9" letter-spacing="1.5">AGAINST THE</text><text x="100" y="115" text-anchor="middle" font-family="Oswald,Impact,sans-serif" font-weight="700" font-size="13" fill="#4a9fdc" fill-opacity=".9" letter-spacing="1.5">CURRENT</text><text x="100" y="173" text-anchor="middle" font-family="Impact,sans-serif" font-size="7" fill="#4a9fdc" fill-opacity=".22" letter-spacing="3">AJ_SHOP</text></svg>
+        <div class="p-card-overlay"><div class="p-card-overlay-label">SHIKO DETAJET</div></div>
+      </div>
+      <div class="p-card-body">
+        <div class="p-card-top"><div><div class="p-card-name">AGAINST THE CURRENT</div><div class="p-card-quote" style="color:var(--blue-bright)">"Against the Current"</div></div><div class="p-card-price">2,400 L</div></div>
+        <div class="color-dots">
+          <button class="color-dot active-blue" style="background:#0a192f" data-hid="5" data-ci="0"></button>
+          <button class="color-dot" style="background:#0d1f3c" data-hid="5" data-ci="1"></button>
+          <button class="color-dot" style="background:#1a0305" data-hid="5" data-ci="2"></button>
+          <button class="color-dot" style="background:#200406" data-hid="5" data-ci="3"></button>
+          <span class="color-name-label">Storm Blue</span>
+        </div>
+        <button class="p-card-btn" data-modal="5">SHTO NË SHPORTË →</button>
+      </div>
+    </div>
+
+    <div class="p-card" data-id="6" data-tag="NEW">
+      <div class="p-card-img-wrap" style="background:radial-gradient(ellipse at 50% 40%,#070e1e 0%,#030710 100%)" data-modal="6">
+        <svg width="220" height="220" viewBox="0 0 200 210" fill="none"><ellipse cx="100" cy="200" rx="60" ry="8" fill="rgba(0,0,0,.35)"/><path d="M55 35C55 35 38 42 30 58L8 108l24 9 3-29v90h130V88l3 29 24-9L170 58C162 42 145 35 145 35c-3 11-21 19-45 19S58 46 55 35z" fill="#070e1e"/><path d="M55 35C55 35 38 42 30 58L8 108l24 9 3-29v90H80V54c-12-2-20-10-25-19z" fill="rgba(0,0,0,.18)"/><path d="M145 35C145 35 162 42 170 58l22 50-24 9-3-29v90h-17V54c4-2 0-10-3-19z" fill="rgba(255,255,255,.04)"/><rect x="68" y="132" width="64" height="34" rx="4" fill="rgba(0,0,0,.22)"/><path d="M88 38Q96 46 100 50q4-4 12-12" stroke="rgba(255,255,255,.2)" stroke-width="1.2" fill="none"/><circle cx="86" cy="38" r="2" fill="rgba(255,255,255,.25)"/><circle cx="114" cy="38" r="2" fill="rgba(255,255,255,.25)"/><text x="100" y="97" text-anchor="middle" font-family="Oswald,Impact,sans-serif" font-weight="700" font-size="13" fill="#5090d0" fill-opacity=".9" letter-spacing="1.5">MADE FROM</text><text x="100" y="115" text-anchor="middle" font-family="Oswald,Impact,sans-serif" font-weight="700" font-size="13" fill="#5090d0" fill-opacity=".9" letter-spacing="1.5">DARKNESS</text><text x="100" y="123" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="#5090d0" fill-opacity=".4" letter-spacing="2">— AJ Original</text><text x="100" y="173" text-anchor="middle" font-family="Impact,sans-serif" font-size="7" fill="#5090d0" fill-opacity=".22" letter-spacing="3">AJ_SHOP</text></svg>
+        <div class="p-card-tag tag-new">NEW</div>
+        <div class="p-card-overlay"><div class="p-card-overlay-label">SHIKO DETAJET</div></div>
+      </div>
+      <div class="p-card-body">
+        <div class="p-card-top"><div><div class="p-card-name">MADE FROM DARKNESS</div><div class="p-card-quote" style="color:var(--blue-bright)">"Made from Darkness"</div></div><div class="p-card-price">3,400 L</div></div>
+        <div class="color-dots">
+          <button class="color-dot active-blue" style="background:#070e1e" data-hid="6" data-ci="0"></button>
+          <button class="color-dot" style="background:#0b1830" data-hid="6" data-ci="1"></button>
+          <button class="color-dot" style="background:#150304" data-hid="6" data-ci="2"></button>
+          <button class="color-dot" style="background:#1e0406" data-hid="6" data-ci="3"></button>
+          <span class="color-name-label">Obsidian Blue</span>
+        </div>
+        <button class="p-card-btn" data-modal="6">SHTO NË SHPORTË →</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="banner">
+  <div class="banner-content">
+    <p class="banner-quote">"Wear what you <span>believe</span>."</p>
+    <p class="banner-author">— AJ_SHOP MANIFESTO</p>
+  </div>
+  <div class="banner-btn">
+    <button class="btn-primary" id="banner-cta">POROSIT TANI</button>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div><div class="footer-brand-name">AJ_SHOP<span>.</span>COM</div><p class="footer-brand-desc">Streetwear shqiptar me citate të vërteta dhe cilësi premium 380gsm.</p></div>
+      <div><div class="footer-col-title">PRODUKTET</div><a class="footer-link">Koleksionet</a><a class="footer-link">Hoodie-t</a><a class="footer-link">Ofertat</a><a class="footer-link">Të rejat</a></div>
+      <div><div class="footer-col-title">NDIHMA</div><a class="footer-link">Madhësia</a><a class="footer-link">Transport</a><a class="footer-link">Kthime</a><a class="footer-link">FAQ</a></div>
+      <div><div class="footer-col-title">GJEJ NE</div><a class="footer-link">Instagram</a><a class="footer-link">TikTok</a><a class="footer-link">WhatsApp</a><a class="footer-link">Email</a></div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 AJ_SHOP.COM — TË GJITHA TË DREJTAT E REZERVUARA</span>
+      <span class="footer-copy">MADE WITH ♥ IN ALBANIA</span>
+    </div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div id="modal-overlay">
+  <div id="modal-backdrop"></div>
+  <div id="modal-box">
+    <div id="modal-preview">
+      <div id="modal-tag"></div>
+      <div id="modal-svg-wrap"></div>
+    </div>
+    <div id="modal-info">
+      <button id="modal-close">×</button>
+      <div id="modal-eyebrow">AJ_SHOP COLLECTION 2025</div>
+      <h2 id="modal-name"></h2>
+      <p id="modal-desc"></p>
+      <div id="modal-quote-block"><span id="modal-quote-text"></span><span id="modal-author"></span></div>
+      <div id="modal-price"></div>
+      <div class="modal-section-label">NGJYRA — <span id="modal-color-label" style="color:var(--text)"></span></div>
+      <div id="modal-colors-wrap"></div>
+      <div class="modal-section-label">MADHËSIA</div>
+      <div id="modal-sizes-wrap"></div>
+      <button id="modal-add-btn" disabled>ZGJIDH MADHËSINË</button>
+      <div class="modal-meta"><span>🚚 2–4 ditë</span><span>↩ 30 ditë</span><span>✦ 380gsm</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- CART -->
+<div id="cart-overlay">
+  <div id="cart-backdrop"></div>
+  <div id="cart-drawer">
+    <div id="cart-header">
+      <span id="cart-title">SHPORTA</span>
+      <button id="cart-close-btn">×</button>
+    </div>
+    <div id="cart-items"><div class="cart-empty">SHPORTA ËSHTË BOSH</div></div>
+    <div id="cart-footer" style="display:none">
+      <div id="cart-total-row"><span id="cart-total-label">TOTAL</span><span id="cart-total-val"></span></div>
+      <button id="checkout-btn">POROSIT TANI</button>
+      <p id="cart-note">Transport falas mbi 5,000 L • Kthim 30 ditë</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── DATA ─────────────────────────────────── */
+const HOODIES = {
+  1:{name:"BORN IN CHAOS",quote:"Born in Chaos",author:"AJ Original",price:2800,tag:"BESTSELLER",desc:"Drop-shoulder fit me kapuç të gjerë. Inspiruar nga rrezistenca urbane.",colors:[{name:"Abyss Blue",hex:"#080e20",tc:"#4a90d9"},{name:"Midnight Navy",hex:"#0a1428",tc:"#6aaaf5"},{name:"Blood Red",hex:"#1a0408",tc:"#e05050"},{name:"Dark Crimson",hex:"#2d0609",tc:"#f07070"}],sizes:["XS","S","M","L","XL","XXL"]},
+  2:{name:"NO RULES",quote:"No Rules",author:null,price:2600,tag:"NEW",desc:"Oversized pullover me tekstur të trashë dhe qëndisje anësore.",colors:[{name:"Steel Blue",hex:"#0d1e3a",tc:"#5b9bd5"},{name:"Ink",hex:"#060d1c",tc:"#8ab4f8"},{name:"Scarlet Dark",hex:"#220508",tc:"#e06060"},{name:"Maroon",hex:"#1e0407",tc:"#d45050"}],sizes:["S","M","L","XL","XXL"]},
+  3:{name:"SILENCE IS LOUD",quote:"Silence is Loud",author:"AJ Original",price:3000,tag:"LIMITED",desc:"Kapuç me dy shtresa dhe zip të fshehur. Stil minimal, impakt maksimal.",colors:[{name:"Deep Ocean",hex:"#091629",tc:"#4a8fd4"},{name:"Cobalt Night",hex:"#0b1f3a",tc:"#7ab3f0"},{name:"Ember Red",hex:"#1f0507",tc:"#d95050"},{name:"Volcano",hex:"#280608",tc:"#e86060"}],sizes:["XS","S","M","L","XL"]},
+  4:{name:"BREATHE FIRE",quote:"Breathe Fire",author:"AJ Original",price:3200,tag:"EXCLUSIVE",desc:"Material premium me logo të gdhendur dhe zinxhirë të dyfishtë.",colors:[{name:"Phantom Blue",hex:"#060f22",tc:"#5a9ae0"},{name:"Royal Night",hex:"#0c1d3d",tc:"#80b0ff"},{name:"Dark Ruby",hex:"#1c0407",tc:"#e04545"},{name:"Deep Burgundy",hex:"#250508",tc:"#f06060"}],sizes:["S","M","L","XL","XXL"]},
+  5:{name:"AGAINST THE CURRENT",quote:"Against the Current",author:null,price:2400,tag:null,desc:"Bluza klasike me kapuç, pambuk organik 380gsm, i butë si velur.",colors:[{name:"Storm Blue",hex:"#0a192f",tc:"#4a9fdc"},{name:"Dark Denim",hex:"#0d1f3c",tc:"#6aadf5"},{name:"Dried Blood",hex:"#1a0305",tc:"#cc4040"},{name:"Wine Dark",hex:"#200406",tc:"#d95555"}],sizes:["XS","S","M","L","XL"]},
+  6:{name:"MADE FROM DARKNESS",quote:"Made from Darkness",author:"AJ Original",price:3400,tag:"NEW",desc:"Zip të plotë me kapuç të çliruar dhe xhepat e fshehur anësorë.",colors:[{name:"Obsidian Blue",hex:"#070e1e",tc:"#5090d0"},{name:"Arctic Night",hex:"#0b1830",tc:"#7aaef8"},{name:"Black Garnet",hex:"#150304",tc:"#d04040"},{name:"Hellfire",hex:"#1e0406",tc:"#e55555"}],sizes:["S","M","L","XL","XXL"]},
+};
+
+const COLOR_NAMES = {
+  1:["Abyss Blue","Midnight Navy","Blood Red","Dark Crimson"],
+  2:["Steel Blue","Ink","Scarlet Dark","Maroon"],
+  3:["Deep Ocean","Cobalt Night","Ember Red","Volcano"],
+  4:["Phantom Blue","Royal Night","Dark Ruby","Deep Burgundy"],
+  5:["Storm Blue","Dark Denim","Dried Blood","Wine Dark"],
+  6:["Obsidian Blue","Arctic Night","Black Garnet","Hellfire"],
+};
+
+/* ── STATE ────────────────────────────────── */
+let cart = [];
+let activeColor = {1:0,2:0,3:0,4:0,5:0,6:0};
+let modalId = null, modalCI = 0, modalSize = null;
+let menuOpen = false;
+
+const fmt = p => p.toLocaleString('sq-AL') + ' L';
+
+/* ── SVG BUILDER ──────────────────────────── */
+function buildSVG(quote, author, hex, tc, sz) {
+  sz = sz || 220;
+  var words = quote.split(' '), mid = Math.ceil(words.length/2);
+  var two = words.length > 2;
+  var lines = two ? [words.slice(0,mid).join(' '), words.slice(mid).join(' ')] : [quote];
+  var y0 = two?97:106, yAut = two?123:121, yLine = two?128:126, fs = two?13:15;
+  var lh = lines.map(function(l,i){
+    return '<text x="100" y="'+(y0+i*18)+'" text-anchor="middle" font-family="Oswald,Impact,sans-serif" font-weight="700" font-size="'+fs+'" fill="'+tc+'" fill-opacity=".9" letter-spacing="1.5">'+l.toUpperCase()+'</text>';
+  }).join('');
+  var ah = author ? '<text x="100" y="'+yAut+'" text-anchor="middle" font-family="\'Courier New\',monospace" font-size="7" fill="'+tc+'" fill-opacity=".4" letter-spacing="2">— '+author+'</text>' : '';
+  return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 200 210" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    +'<ellipse cx="100" cy="200" rx="60" ry="8" fill="rgba(0,0,0,.35)"/>'
+    +'<path d="M55 35C55 35 38 42 30 58L8 108l24 9 3-29v90h130V88l3 29 24-9L170 58C162 42 145 35 145 35c-3 11-21 19-45 19S58 46 55 35z" fill="'+hex+'"/>'
+    +'<path d="M55 35C55 35 38 42 30 58L8 108l24 9 3-29v90H80V54c-12-2-20-10-25-19z" fill="rgba(0,0,0,.18)"/>'
+    +'<path d="M145 35C145 35 162 42 170 58l22 50-24 9-3-29v90h-17V54c4-2 0-10-3-19z" fill="rgba(255,255,255,.04)"/>'
+    +'<rect x="68" y="132" width="64" height="34" rx="4" fill="rgba(0,0,0,.22)"/>'
+    +'<path d="M68 35C68 20 80 12 100 12s32 8 32 23" stroke="rgba(255,255,255,.12)" stroke-width="2" fill="none"/>'
+    +'<path d="M88 38Q96 46 100 50q4-4 12-12" stroke="rgba(255,255,255,.2)" stroke-width="1.2" fill="none"/>'
+    +'<circle cx="86" cy="38" r="2" fill="rgba(255,255,255,.25)"/>'
+    +'<circle cx="114" cy="38" r="2" fill="rgba(255,255,255,.25)"/>'
+    +lh+ah
+    +'<line x1="76" y1="'+yLine+'" x2="124" y2="'+yLine+'" stroke="'+tc+'" stroke-opacity=".15" stroke-width=".8"/>'
+    +'<text x="100" y="173" text-anchor="middle" font-family="Impact,sans-serif" font-size="7" fill="'+tc+'" fill-opacity=".22" letter-spacing="3">AJ_SHOP</text>'
+    +'</svg>';
+}
+
+/* ── TAP HELPER (works on both touch and click) ── */
+function onTap(el, fn) {
+  var moved = false;
+  el.addEventListener('touchstart', function(e){ moved=false; }, {passive:true});
+  el.addEventListener('touchmove',  function(e){ moved=true;  }, {passive:true});
+  el.addEventListener('touchend',   function(e){ if(!moved){ e.preventDefault(); fn(e); } });
+  el.addEventListener('click',      fn);
+}
+
+/* ── MOBILE MENU ──────────────────────────── */
+var burgerBtn  = document.getElementById('burger-btn');
+var mobileMenu = document.getElementById('mobile-menu');
+onTap(burgerBtn, function(){ menuOpen=!menuOpen; mobileMenu.classList.toggle('open',menuOpen); });
+document.querySelectorAll('.mobile-link').forEach(function(l){
+  onTap(l, function(){ menuOpen=false; mobileMenu.classList.remove('open'); });
+});
+
+/* ── SCROLL ───────────────────────────────── */
+window.addEventListener('scroll', function(){
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY>50);
+  if(menuOpen){ menuOpen=false; mobileMenu.classList.remove('open'); }
+}, {passive:true});
+
+/* ── BANNER CTA ───────────────────────────── */
+onTap(document.getElementById('banner-cta'), function(){
+  document.getElementById('produktet').scrollIntoView({behavior:'smooth'});
+});
+
+/* ── CART BTN ─────────────────────────────── */
+onTap(document.getElementById('cart-btn'), openCart);
+
+/* ── FILTER ───────────────────────────────── */
+document.querySelectorAll('.filter-btn').forEach(function(btn){
+  onTap(btn, function(){
+    document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    var f = btn.dataset.filter;
+    document.querySelectorAll('.p-card').forEach(function(card){
+      card.style.display = (f==='ALL' || card.dataset.tag===f) ? '' : 'none';
+    });
+  });
+});
+
+/* ── COLOR DOTS ───────────────────────────── */
+document.querySelectorAll('.color-dot').forEach(function(dot){
+  onTap(dot, function(e){
+    e.stopPropagation();
+    var hid = parseInt(dot.dataset.hid);
+    var ci  = parseInt(dot.dataset.ci);
+    var h   = HOODIES[hid];
+    var c   = h.colors[ci];
+    var isBlue = ci < 2;
+    activeColor[hid] = ci;
+
+    // Update card background
+    var card = document.querySelector('.p-card[data-id="'+hid+'"]');
+    var imgWrap = card.querySelector('.p-card-img-wrap');
+    var bg = isBlue
+      ? 'radial-gradient(ellipse at 50% 40%,'+c.hex+' 0%,#030710 100%)'
+      : 'radial-gradient(ellipse at 50% 40%,'+c.hex+' 0%,#090205 100%)';
+    imgWrap.style.background = bg;
+
+    // Update SVG inside card
+    var svgWrap = imgWrap.querySelector('svg');
+    svgWrap.outerHTML = buildSVG(h.quote, h.author, c.hex, c.tc, 220);
+
+    // Update quote color
+    var qEl = card.querySelector('.p-card-quote');
+    if(qEl) qEl.style.color = isBlue ? 'var(--blue-bright)' : 'var(--red-bright)';
+
+    // Update color label
+    card.querySelector('.color-name-label').textContent = c.name;
+
+    // Update dot active state
+    card.querySelectorAll('.color-dot').forEach(function(d,i){
+      d.classList.remove('active-blue','active-red');
+      if(i===ci) d.classList.add(isBlue ? 'active-blue' : 'active-red');
+    });
+  });
+});
+
+/* ── OPEN MODAL ───────────────────────────── */
+function openModal(id) {
+  modalId   = id;
+  modalCI   = activeColor[id] || 0;
+  modalSize = null;
+  renderModal();
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+// Hero cards
+document.querySelectorAll('.hero-card').forEach(function(el){
+  onTap(el, function(){ openModal(parseInt(el.dataset.modal)); });
+});
+
+// Product image wraps + "add" buttons
+document.querySelectorAll('[data-modal]').forEach(function(el){
+  if(el.classList.contains('hero-card')) return; // already handled
+  onTap(el, function(e){
+    e.stopPropagation();
+    openModal(parseInt(el.dataset.modal));
+  });
+});
+
+/* ── CLOSE MODAL ──────────────────────────── */
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+onTap(document.getElementById('modal-close'),   closeModal);
+onTap(document.getElementById('modal-backdrop'), closeModal);
+
+/* ── RENDER MODAL ─────────────────────────── */
+function renderModal() {
+  var h = HOODIES[modalId];
+  var c = h.colors[modalCI];
+  var isBlue = modalCI < 2;
+  var bg = isBlue
+    ? 'radial-gradient(ellipse at 50% 40%,'+c.hex+' 0%,#030509 100%)'
+    : 'radial-gradient(ellipse at 50% 40%,'+c.hex+' 0%,#090205 100%)';
+
+  document.getElementById('modal-preview').style.background = bg;
+  document.getElementById('modal-svg-wrap').innerHTML = buildSVG(h.quote, h.author, c.hex, c.tc, 240);
+
+  document.getElementById('modal-name').textContent = h.name;
+  document.getElementById('modal-desc').textContent = h.desc;
+  document.getElementById('modal-quote-text').textContent = '"'+h.quote+'"';
+  document.getElementById('modal-quote-block').style.color = c.tc;
+  var authEl = document.getElementById('modal-author');
+  authEl.textContent = h.author ? '— '+h.author : '';
+  authEl.style.display = h.author ? 'block' : 'none';
+  document.getElementById('modal-price').textContent = fmt(h.price);
+  document.getElementById('modal-color-label').textContent = c.name;
+
+  // Tag
+  var tagEl = document.getElementById('modal-tag');
+  if(h.tag){
+    tagEl.textContent = h.tag; tagEl.style.display = 'block';
+    tagEl.style.background = h.tag==='EXCLUSIVE'?'linear-gradient(135deg,#6b0d14,#c01a24)':h.tag==='LIMITED'?'#3d060b':'#0e2354';
+  } else { tagEl.style.display='none'; }
+
+  // Colors
+  var colWrap = document.getElementById('modal-colors-wrap');
+  colWrap.innerHTML = h.colors.map(function(col,i){
+    return '<button class="modal-color-dot'+(modalCI===i?' active':'')+'" style="background:'+col.hex+'" data-ci="'+i+'"></button>';
+  }).join('');
+  colWrap.querySelectorAll('.modal-color-dot').forEach(function(dot){
+    onTap(dot, function(){
+      modalCI = parseInt(dot.dataset.ci);
+      renderModal();
+    });
+  });
+
+  // Sizes
+  var szWrap = document.getElementById('modal-sizes-wrap');
+  szWrap.innerHTML = h.sizes.map(function(s){
+    return '<button class="size-btn'+(modalSize===s?' active':'')+'" data-sz="'+s+'">'+s+'</button>';
+  }).join('');
+  szWrap.querySelectorAll('.size-btn').forEach(function(btn){
+    onTap(btn, function(){
+      modalSize = btn.dataset.sz;
+      renderModal();
+    });
+  });
+
+  // Add button
+  var addBtn = document.getElementById('modal-add-btn');
+  addBtn.textContent = modalSize ? 'SHTO NË SHPORTË' : 'ZGJIDH MADHËSINË';
+  addBtn.disabled = !modalSize;
+  addBtn.classList.remove('success');
+}
+
+/* ── ADD TO CART ──────────────────────────── */
+onTap(document.getElementById('modal-add-btn'), function(){
+  if(!modalSize) return;
+  var h   = HOODIES[modalId];
+  var c   = h.colors[modalCI];
+  var id  = modalId+'-'+modalCI+'-'+modalSize;
+  var ex  = cart.find(function(i){ return i.id===id; });
+  if(ex){ ex.qty++; }
+  else {
+    cart.push({id:id,hoodieId:modalId,name:h.name,quote:h.quote,
+      price:h.price,hex:c.hex,tc:c.tc,colorName:c.name,size:modalSize,qty:1});
+  }
+  var addBtn = document.getElementById('modal-add-btn');
+  addBtn.textContent = '✓ SHTUAR'; addBtn.classList.add('success');
+  updateCartCount();
+  setTimeout(function(){ closeModal(); openCart(); }, 600);
+});
+
+/* ── CART ─────────────────────────────────── */
+function openCart()  { renderCart(); document.getElementById('cart-overlay').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeCart() { document.getElementById('cart-overlay').classList.remove('open'); document.body.style.overflow=''; }
+
+onTap(document.getElementById('cart-close-btn'), closeCart);
+onTap(document.getElementById('cart-backdrop'),  closeCart);
+
+function updateCartCount() {
+  var t = cart.reduce(function(s,i){ return s+i.qty; }, 0);
+  var el = document.getElementById('cart-count');
+  el.textContent = t;
+  el.style.display = t>0 ? 'flex' : 'none';
+}
+
+function renderCart() {
+  var el   = document.getElementById('cart-items');
+  var foot = document.getElementById('cart-footer');
+  if(!cart.length){
+    el.innerHTML = '<div class="cart-empty">SHPORTA ËSHTË BOSH</div>';
+    foot.style.display='none'; return;
+  }
+  el.innerHTML = cart.map(function(item){
+    return '<div class="cart-item">'
+      +'<div class="cart-item-thumb" style="background:'+item.hex+'">'+buildSVG(item.quote,null,item.hex,item.tc,62)+'</div>'
+      +'<div style="flex:1">'
+        +'<div class="cart-item-name">'+item.name+'</div>'
+        +'<div class="cart-item-sub">'+item.colorName+' · '+item.size+'</div>'
+        +'<div class="cart-item-controls">'
+          +'<div class="qty-wrap">'
+            +'<button class="qty-btn" data-id="'+item.id+'" data-q="'+(item.qty-1)+'">−</button>'
+            +'<span class="qty-val">'+item.qty+'</span>'
+            +'<button class="qty-btn" data-id="'+item.id+'" data-q="'+(item.qty+1)+'">+</button>'
+          +'</div>'
+          +'<span class="cart-item-price">'+fmt(item.price*item.qty)+'</span>'
+          +'<button class="cart-item-remove" data-id="'+item.id+'">✕</button>'
+        +'</div>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+
+  document.getElementById('cart-total-val').textContent = fmt(cart.reduce(function(s,i){ return s+i.price*i.qty; },0));
+  foot.style.display = 'block';
+
+  el.querySelectorAll('.qty-btn').forEach(function(btn){
+    onTap(btn, function(){ changeQty(btn.dataset.id, parseInt(btn.dataset.q)); });
+  });
+  el.querySelectorAll('.cart-item-remove').forEach(function(btn){
+    onTap(btn, function(){ removeItem(btn.dataset.id); });
+  });
+}
+
+function changeQty(id, q) {
+  if(q<1){ removeItem(id); return; }
+  var item = cart.find(function(i){ return i.id===id; });
+  if(item) item.qty=q;
+  renderCart(); updateCartCount();
+}
+function removeItem(id) {
+  cart = cart.filter(function(i){ return i.id!==id; });
+  renderCart(); updateCartCount();
+}
+</script>
+</body>
+</html>
